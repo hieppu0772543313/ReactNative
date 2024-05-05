@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "709087307702",
+    "project_id": "hiepfirebase",
+    "storage_bucket": "hiepfirebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709087307702:android:0839f3faa4483b3b2bc317",
+        "android_client_info": {
+          "package_name": "com.hiepfirebase"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSjFuc9rut3vDhU1IOSRkO_82Q-7uasEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709087307702:android:45676f0ed077234b2bc317",
+        "android_client_info": {
+          "package_name": "com.todo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBSjFuc9rut3vDhU1IOSRkO_82Q-7uasEY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
