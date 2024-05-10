@@ -1,22 +1,22 @@
-import Login from './KTGK/Login';
+import 'react-native-gesture-handler';
 import React from 'react';
+import { View } from 'react-native';
+import { PaperProvider } from 'react-native-paper';
 import {NavigationContainer} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
-import auth from '@react-native-firebase/auth'
-import Register from './KTGK/Register';
-import "react-native-gesture-handler"
-import Router from './route/MyStack';
-import MyStack from './route/MyStack';
+import MyStack from './routers/MyStack';
+import {MyContextControllerProvider} from './store';
 
-const App =()=> {
-    return (
-      
-      <NavigationContainer>
-        <MyStack/>
-      </NavigationContainer>
-      //<Login/>
-      //<Register/> 
-    )
-}
-
-export default App
+const App = () => {
+  return (
+    <View style={{flex: 1}}>
+      <MyContextControllerProvider>
+        <PaperProvider>
+          <NavigationContainer>
+            <MyStack />
+          </NavigationContainer>
+        </PaperProvider>
+      </MyContextControllerProvider>
+    </View>
+  );
+};
+export default App;
