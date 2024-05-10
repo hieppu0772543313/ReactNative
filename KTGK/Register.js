@@ -1,244 +1,146 @@
-import {Button, HelperText, Text, TextInput} from "react-native-paper"
-import {Alert, View, Image, StyleSheet} from 'react-native'
-import { useState } from "react"
-import auth from '@react-native-firebase/auth'
+import {StyleSheet, View, Image, TouchableOpacity} from 'react-native';
+import {Button, Text, TextInput, HelperText} from 'react-native-paper';
+import React from 'react';
+import '@react-native-firebase/app';
+import {signup} from '../store';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-const Register = ({navigation})=>{
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [fullname, setFullname] = useState("")
-    const [confirmpassword, setConfirmpassword] = useState("")
-    const [errors, setErrors] = useState({
-        fullname: false,
-        email: false,
-        password: false,
-        confirmpassword: false
-    });
-
-    const handleCreateAccount =()=>{
-        let errorsFound = false;
-        let newErrors = { ...errors };
-
-        if (!fullname.trim()) {
-            newErrors.fullname = true;
-            errorsFound = true;
-        } else {
-            newErrors.fullname = false;
-        }
-
-        if (!email.trim()) {
-            newErrors.email = true;
-            errorsFound = true;
-        } else {
-            newErrors.email = false;
-        }
-
-        if (password.length < 6) {
-            newErrors.password = true;
-            errorsFound = true;
-        } else {
-            newErrors.password = false;
-        }
-
-        if (password !== confirmpassword) {
-            newErrors.confirmpassword = true;
-            errorsFound = true;
-        } else {
-            newErrors.confirmpassword = false;
-        }
-
-        setErrors(newErrors);
-
-        if (!errorsFound) {
-            auth().createUserWithEmailAndPassword(email, password)
-            .then(()=>Alert.alert("Dang ky thanh cong"))
-            .catch(e => Alert.alert(e.message))
-        }
-    }
-
-    return (
-        <View style={MyStyle.viewContainer}>
-            <View style = {MyStyle.ViewImage}>
-                <Image
-                    style ={MyStyle.image}
-                    source={require('../assets/logofisebase.png')}
-                />
-           </View>
-           <TextInput 
-                style ={MyStyle.TextInput}
-                label={"Full name"}
-                value={fullname}
-                onChangeText={setFullname}
-           />
-           {/* Hiển thị HelperText chỉ khi người dùng nhấn nút "Create Account" và trường này còn trống */}
-           {errors.fullname && <HelperText type="error">
-                Full Name không được để trống
-           </HelperText>}
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Email"}
-                value={email}
-                onChangeText={setEmail}
-            />
-            {errors.email && <HelperText type="error">
-                Email không được để trống
-           </HelperText>}
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Password"}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry    
-            />
-            {errors.password && <HelperText type="error">
-                Password phải có ít nhất 6 ký tự
-           </HelperText>}
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Confirm Password"}
-                value={confirmpassword}
-                onChangeText={setConfirmpassword}
-                secureTextEntry    
-            />
-            {errors.confirmpassword && <HelperText type="error">
-                Password không khớp
-           </HelperText>}
-            <Button mode="contained"
-                style = {{margin: 10}}
-                onPress={handleCreateAccount}
-            >
-                Create Account
-            </Button>
-            <View style={{flexDirection:"row", alignItems: 'center', justifyContent: 'center'}}>
-                <Text>
-                    Already got an accout ?
-                </Text>
-                <Button style={{margin: 10}}
-                    onPress={()=> navigation.navigate('Login')}>
-                    Log in
-                </Button>
-            </View>
-        </View>
-    )
+function Register({navigation}) {
+  const [email, setEmail] = React.useState('');
+  const [pass, setPass] = React.useState('');
+  const [fullname, setFullname] = React.useState('');
+  const [errorEmail, setErrorEmail] = React.useState('');
+  const [errorPass, setErrorPass] = React.useState('');
+  const [errorFullname, setErrorFullname] = React.useState('');
+  const [confirmpass, setConfirmpass] = React.useState('');
+  const [errorconfirmpass, setErrorConfirmpass] = React.useState('');
+  const handleCreateAccount = () => {
+    let regEmail =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    if (!email.match(regEmail)) {
+      setErrorEmail('Invalid Email Address');
+    } else if (fullname === '') {
+      setErrorFullname('Invalid fullname');
+    } else if (pass.length < 6) {
+      setErrorPass('Password need 6 keywords or more');
+    } else if (confirmpass !== pass) {
+      setErrorConfirmpass('Dont match');
+    } else signup(email, pass, fullname);
+  };
+  return (
+    <View style={{flex: 1, alignItems: 'center'}}>
+      <KeyboardAwareScrollView
+        style={{ flex: 1, width: '100%' }}
+        keyboardShouldPersistTaps="always">
+          <Image
+            source={require('../assets/logovippro.jpg')}
+            style={styles.image}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder='Full Name'
+            placeholderTextColor="#aaaaaa"
+            value={fullname}
+            onChangeText={setFullname}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          {errorFullname && <HelperText type="error">{errorFullname}</HelperText>}
+          <TextInput
+            style={styles.input}
+            placeholder='Email'
+            placeholderTextColor="#aaaaaa"
+            value={email}
+            onChangeText={setEmail}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          {errorEmail && <HelperText type="error">{errorEmail}</HelperText>}
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#aaaaaa"
+            secureTextEntry
+            placeholder='Password'
+            value={pass}
+            onChangeText={setPass}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          {errorPass && <HelperText type="error">{errorPass}</HelperText>}
+          <TextInput
+            style={styles.input}
+            placeholderTextColor="#aaaaaa"
+            secureTextEntry
+            placeholder='Confirm Password'
+            value={confirmpass}
+            onChangeText={setConfirmpass}
+            underlineColorAndroid="transparent"
+            autoCapitalize="none"
+          />
+          {errorconfirmpass && (
+            <HelperText type="error">{errorconfirmpass}</HelperText>
+          )}
+          <TouchableOpacity
+            style={styles.button}
+            onPress={handleCreateAccount}>
+              <Text style={styles.buttonTitle}>Create account</Text>
+          </TouchableOpacity>
+          <View style={styles.footerView}>
+            <Text style={styles.footerText}>Already got an account?
+              <Text onPress={() => navigation.navigate('Login')} style={styles.footerLink}> Login</Text>
+            </Text>
+          </View>
+      </KeyboardAwareScrollView>
+    </View>
+  );
 }
-const MyStyle =StyleSheet.create({
-    image:{
-        height: 100,
-        width: 100,
-        margin: 50,
-        padding: 50,
-    },
-    viewContainer:{
-        flex: 1,
-        justifyContent: 'center',
-      },
-    ViewImage : {
-        //flex: 1,
-        alignItems: 'center'
-    },
-    TextInput:{
-        marginRight: 20,
-        marginLeft: 20,
-        marginBottom: 5,
-    }
-})
-export default Register
-
-
-/*import {Button, HelperText, Text, TextInput} from "react-native-paper"
-import {Alert, View, Image, StyleSheet} from 'react-native'
-import { useState } from "react"
-import auth from '@react-native-firebase/auth'
-
-const Register = ()=>{
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [fullname, setFullname] = useState("")
-    const [confirmpassword, setConfirmpassword] =useState("")
-    
-    const handleCreateAccount =()=>{
-        auth().createUserWithEmailAndPassword(email, password)
-        .then(()=>Alert.alert("Dang ky thanh cong"))
-        .catch(e => Alert.alert(e.message))
-    }
-    
-    return (
-        <View style={MyStyle.viewContainer}>
-            <View style = {MyStyle.ViewImage}>
-                <Image
-                    style ={MyStyle.image}
-                    source={require('../assets/logofisebase.png')}
-                />
-           </View>
-           <TextInput 
-                style ={MyStyle.TextInput}
-                label={"Full name"}
-                value={fullname}
-                onChangeText={setFullname}
-           />
-            {isTyping && <HelperText type="error">
-                Full Name khong duoc de trong
-           </HelperText>}
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Email"}
-                value={email}
-                onChangeText={setEmail}
-            />
-            <HelperText type="error">
-                Email khong duoc de trong
-           </HelperText>
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Password"}
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry    
-            />
-            <HelperText type="error">
-                Password it nhat 6 ky tu
-           </HelperText>
-            <TextInput
-                style ={MyStyle.TextInput}
-                label={"Confirm Password"}
-                value={confirmpassword}
-                onChangeText={setConfirmpassword}
-                secureTextEntry    
-            />
-            <HelperText type="error">
-                Password khong khop
-           </HelperText>
-            <Button mode="contained"
-                style = {{margin: 10}}
-                onPress={handleCreateAccount}
-            >
-                Create Account
-            </Button>
-
-            
-        </View>
-    )
-}
-const MyStyle =StyleSheet.create({
-    image:{
-        height: 100,
-        width: 100,
-        margin: 50,
-        padding: 50,
-    },
-    viewContainer:{
-        flex: 1,
-        justifyContent: 'center',
-      },
-    ViewImage : {
-        //flex: 1,
-        alignItems: 'center'
-    },
-    TextInput:{
-        marginRight: 20,
-        marginLeft: 20,
-        marginBottom: 5,
-       
-    }
-})
-export default Register */
+export default Register;
+const styles = StyleSheet.create({
+  image: {
+    flex: 1,
+    height: 120,
+    width: 90,
+    alignSelf: "center",
+    margin: 30
+  },
+  input: {
+    height: 48,
+    borderRadius: 5,
+    overflow: 'hidden',
+    backgroundColor: 'white',
+    marginTop: 10,
+    marginBottom: 10,
+    marginLeft: 30,
+    marginRight: 30,
+    paddingLeft: 16
+  },
+  button: {
+    backgroundColor: '#788eec',
+    marginLeft: 30,
+    marginRight: 30,
+    marginTop: 20,
+    height: 48,
+    borderRadius: 5,
+    alignItems: "center",
+    justifyContent: 'center'
+  },
+  buttonTitle: {
+      color: 'white',
+      fontSize: 16,
+      fontWeight: "bold"
+  },
+  footerView: {
+      flex: 1,
+      alignItems: "center",
+      marginTop: 20
+  },
+  footerText: {
+      fontSize: 16,
+      color: '#2e2e2d'
+  },
+  footerLink: {
+      color: "#788eec",
+      fontWeight: "bold",
+      fontSize: 16
+  }
+});
